@@ -1,8 +1,10 @@
 package ru.netology.test;
 
+import com.codeborne.selenide.ClickOptions;
 import com.codeborne.selenide.Condition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Keys;
 
 import java.lang.module.Configuration;
 import java.time.Duration;
@@ -22,17 +24,20 @@ public class GetCardFormTest {
     @Test
     void shouldSubmitRequest() {
         LocalDate today = LocalDate.now();
-        LocalDate meetingDay = today.plusDays(3);
+        LocalDate meetingDay = today.plusDays(5);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         String textDate = meetingDay.format(formatter);
 
         $("[placeholder='Город']").setValue("Санкт-Петербург");
+        $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
         $("[placeholder='Дата встречи']").setValue(textDate);
         $("[name='name']").setValue("Иванов Петр");
         $("[name='phone']").setValue("+79001234567");
         $("[class='checkbox__box']").click();
         $(withText("Забронировать")).click();
         $(withText("Успешно")).shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $("[class='notification__content']").shouldHave(Condition.text(textDate));
+
 
 
     }
